@@ -8,10 +8,33 @@
   <style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; } #root { min-height: 100vh; } input, select, textarea, button { font-family: inherit; } @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }</style>
 </head>
 <body>
-  <div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px"><div style="font-size:48px">💊</div><div style="font-weight:700;color:#1d4ed8;font-size:20px">Sesanda Pharmacy</div><div style="color:#6b7280">Loading...</div></div></div>
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone@7.23.2/babel.min.js"></script>
+  <div id="root">
+  <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;background:#f0f9ff">
+    <div style="font-size:56px">💊</div>
+    <div style="font-weight:800;color:#1d4ed8;font-size:22px">Sesanda Pharmacy</div>
+    <div style="width:220px;background:#e2e8f0;border-radius:99px;height:8px;overflow:hidden">
+      <div id="prog-bar" style="height:100%;background:linear-gradient(90deg,#1d4ed8,#059669);width:5%;border-radius:99px;transition:width 0.5s ease"></div>
+    </div>
+    <div style="color:#6b7280;font-size:13px" id="load-status">Starting up...</div>
+    <div style="color:#9ca3af;font-size:11px;text-align:center;max-width:240px">First load takes ~15 seconds.<br/>After that, opens instantly! ⚡</div>
+  </div>
+</div>
+<script>
+  function setProgress(pct, msg) {
+    var b = document.getElementById("prog-bar");
+    var s = document.getElementById("load-status");
+    if(b) b.style.width = pct + "%";
+    if(s) s.textContent = msg;
+  }
+  setProgress(10, "Loading React...");
+</script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+  <script>setProgress(30, "Loading React DOM...");</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+  <script>setProgress(60, "Compiling app... (15 sec first time only)");</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js" onload="setProgress(75, 'Launching app...')"></script>
   <script type="text/babel" data-presets="react">
     const { useState, useEffect, useCallback, useRef } = React;
     const store = {
@@ -740,7 +763,17 @@ const TransactionsPage = ({ db, setDb }) => {
       <div>Authorized by: ________________________</div>
     </div>
     <br/><button onclick="window.print()">🖨️ Print</button>
-    </body></html>`);
+    
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(r => console.log('SW registered:', r.scope))
+          .catch(e => console.log('SW error:', e));
+      });
+    }
+  </script>
+</body></html>`);
     w.document.close();
     w.focus();
     setTimeout(() => w.print(), 500);
@@ -777,7 +810,17 @@ const TransactionsPage = ({ db, setDb }) => {
     <div class="total-row"><span>TOTAL</span><span>Rs. ${(+inv.total || 0).toLocaleString("en-LK", { minimumFractionDigits: 2 })}</span></div>
     <div class="thanks">Thank you! Please visit again 🙏</div>
     <br/><button onclick="window.print()" style="width:100%;padding:10px;background:#059669;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">🖨️ Print Receipt</button>
-    </body></html>`);
+    
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(r => console.log('SW registered:', r.scope))
+          .catch(e => console.log('SW error:', e));
+      });
+    }
+  </script>
+</body></html>`);
     w.document.close();
     w.focus();
     setTimeout(() => w.print(), 500);
@@ -3078,7 +3121,7 @@ function App() {
     </div>
   );
 }
-    const root = ReactDOM.createRoot(document.getElementById('root'));
+    setProgress(100, 'Ready!'); const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(React.createElement(App));
   </script>
   <div style="position:fixed;bottom:20px;right:16px;z-index:9999;">
@@ -3094,6 +3137,16 @@ function App() {
     function doExport(){const d=localStorage.getItem('sp_sesanda_db');if(!d){alert('No data yet!');return;}const a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(d);a.download='sesanda-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();alert('✅ Backup downloaded!');}
     function doImport(e){const f=e.target.files[0];if(!f)return;if(!confirm('Replace ALL data?'))return;const r=new FileReader();r.onload=function(ev){try{JSON.parse(ev.target.result);localStorage.setItem('sp_sesanda_db',ev.target.result);alert('✅ Restored!');location.reload();}catch{alert('❌ Invalid file!');}};r.readAsText(f);}
     function doClear(){if(!confirm('DELETE ALL DATA?'))return;if(!confirm('Sure?'))return;localStorage.removeItem('sp_sesanda_db');location.reload();}
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(r => console.log('SW registered:', r.scope))
+          .catch(e => console.log('SW error:', e));
+      });
+    }
   </script>
 </body>
 </html>
