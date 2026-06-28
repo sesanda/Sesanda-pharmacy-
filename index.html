@@ -16,7 +16,20 @@
       <div id="prog-bar" style="height:100%;background:linear-gradient(90deg,#1d4ed8,#059669);width:5%;border-radius:99px;transition:width 0.5s ease"></div>
     </div>
     <div style="color:#6b7280;font-size:13px" id="load-status">Starting up...</div>
-    <div style="color:#9ca3af;font-size:11px;text-align:center;max-width:240px">First load takes ~15 seconds.<br/>After that, opens instantly! ⚡</div>
+    <div style="color:#9ca3af;font-size:11px;text-align:center;max-width:240px" id="load-note">
+      First load: <strong>30-60 seconds</strong> on mobile.<br/>
+      After that, opens <strong>instantly</strong>! ⚡<br/>
+      <span id="timer-txt"></span>
+    </div>
+    <script>
+      var sec = 0;
+      var timerInterval = setInterval(function() {
+        sec++;
+        var t = document.getElementById('timer-txt');
+        if(t) t.textContent = sec + 's elapsed...';
+        if(sec > 90) { clearInterval(timerInterval); }
+      }, 1000);
+    </script>
   </div>
 </div>
 <script>
@@ -763,17 +776,7 @@ const TransactionsPage = ({ db, setDb }) => {
       <div>Authorized by: ________________________</div>
     </div>
     <br/><button onclick="window.print()">🖨️ Print</button>
-    
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(r => console.log('SW registered:', r.scope))
-          .catch(e => console.log('SW error:', e));
-      });
-    }
-  </script>
-</body></html>`);
+    </body></html>\`);
     w.document.close();
     w.focus();
     setTimeout(() => w.print(), 500);
@@ -810,17 +813,7 @@ const TransactionsPage = ({ db, setDb }) => {
     <div class="total-row"><span>TOTAL</span><span>Rs. ${(+inv.total || 0).toLocaleString("en-LK", { minimumFractionDigits: 2 })}</span></div>
     <div class="thanks">Thank you! Please visit again 🙏</div>
     <br/><button onclick="window.print()" style="width:100%;padding:10px;background:#059669;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">🖨️ Print Receipt</button>
-    
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(r => console.log('SW registered:', r.scope))
-          .catch(e => console.log('SW error:', e));
-      });
-    }
-  </script>
-</body></html>`);
+    </body></html>\`);
     w.document.close();
     w.focus();
     setTimeout(() => w.print(), 500);
@@ -3121,8 +3114,14 @@ function App() {
     </div>
   );
 }
-    setProgress(100, 'Ready!'); const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(App));
+    try {
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(React.createElement(App));
+      if(typeof setProgress !== 'undefined') setProgress(100, 'Ready!');
+    } catch(e) {
+      console.error('App render error:', e);
+      document.getElementById('root').innerHTML = '<div style="padding:40px;text-align:center;color:red"><h2>⚠️ App Error</h2><p>' + e.message + '</p><button onclick="location.reload()">Reload</button></div>';
+    }
   </script>
   <div style="position:fixed;bottom:20px;right:16px;z-index:9999;">
     <div id="bk-panel" style="display:none;background:#fff;border-radius:14px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.2);border:1px solid #e5e7eb;min-width:220px;margin-bottom:10px;">
